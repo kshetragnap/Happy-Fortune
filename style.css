@@ -1,0 +1,26 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Press Start 2P', monospace;
+}
+
+#game-container {
+    position: relative;
+}
+
+canvas {
+    image-rendering: optimizeSpeed;             /* Older versions of FF */
+    image-rendering: -moz-crisp-edges;          /* Firefox */
+    image-rendering: -webkit-optimize-contrast; /* Webkit (Safari) */
+    image-rendering: -o-crisp-edges;           /* Opera */
+    image-rendering: pixelated;                /* Chrome */
+    image-rendering: crisp-edges;              /* General setting */
+    -ms-interpolation-mode: nearest-neighbor;  /* IE (non-standard property) */
+    border: 4px solid #333;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
