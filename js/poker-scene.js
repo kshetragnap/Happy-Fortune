@@ -105,7 +105,10 @@ class PokerScene extends Scene {
                 if (bet === this.selectedBet) {
                     ctx.strokeStyle = '#ffd700';
                     ctx.lineWidth = 2;
-                    ctx.strokeRect(chipX - 2, chipY - 2, 52, 52);
+                    const chipAsset = this.engine.assets.getAsset(`chip_${bet}`);
+                    const w = Math.round((chipAsset ? chipAsset.width : 16) * 4);
+                    const h = Math.round((chipAsset ? chipAsset.height : 16) * 4);
+                    ctx.strokeRect(chipX - 2, chipY - 2, w + 4, h + 4);
                 }
             });
 

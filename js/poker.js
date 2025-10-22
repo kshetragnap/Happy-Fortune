@@ -96,12 +96,11 @@ class PokerGame {
     }
 
     placeBet(amount) {
-        if (this.gameState !== 'betting' && this.gameState !== 'complete') return false;
+        if (this.gameState !== 'betting') return false;
         if (amount > this.engine.coins) return false;
 
         this.currentBet = amount;
         this.engine.removeCoins(amount);
-        this.gameState = 'betting'; // Reset the game state first
         this.startNewHand();
         return true;
     }
@@ -146,9 +145,8 @@ class PokerGame {
             this.engine.addCoins(winnings);
             this.message = `${result.name}! Won ${winnings} coins!`;
         } else {
-            this.message = 'No win. Place new bet to play again!';
+            this.message = 'No win. Try again!';
         }
-        this.gameState = 'complete';
     }
 
     canDraw() {

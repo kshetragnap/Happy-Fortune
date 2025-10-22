@@ -121,6 +121,12 @@ class BlackjackGame {
         
         if (this.playerHand.isBusted()) {
             this.endHand('Player busts!');
+            return;
+        }
+
+        // If player reaches 21 exactly, automatically stand
+        if (this.playerHand.getScore() === 21) {
+            this.stand();
         }
     }
 
@@ -181,7 +187,7 @@ class BlackjackGame {
     }
 
     canHit() {
-        return this.gameState === 'playing' && !this.playerHand.isBusted();
+        return this.gameState === 'playing' && !this.playerHand.isBusted() && this.playerHand.getScore() < 21;
     }
 
     canStand() {

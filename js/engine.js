@@ -11,15 +11,22 @@ class GameEngine {
         // Initialize pixel art assets
         this.assets = null;
 
-        // Initialize canvas with pixel-perfect settings
-        this.canvas = document.createElement('canvas');
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
-        this.canvas.style.imageRendering = 'pixelated';
-        this.canvas.style.imageRendering = '-moz-crisp-edges';
-        this.canvas.style.imageRendering = 'crisp-edges';
-        this.ctx = this.canvas.getContext('2d');
-        this.ctx.imageSmoothingEnabled = false; // Disable anti-aliasing
+    // Initialize canvas with pixel-perfect high-DPI settings
+    this.canvas = document.createElement('canvas');
+    // Set internal buffer at pixelRatio times logical size for crisp upscaling
+    this.canvas.width = Math.round(this.width * this.pixelRatio);
+    this.canvas.height = Math.round(this.height * this.pixelRatio);
+    // Keep CSS size at logical dimensions so layout remains unchanged
+    this.canvas.style.width = this.width + 'px';
+    this.canvas.style.height = this.height + 'px';
+    // Prefer pixelated rendering in CSS
+    this.canvas.style.imageRendering = 'pixelated';
+    this.canvas.style.imageRendering = '-moz-crisp-edges';
+    this.canvas.style.imageRendering = 'crisp-edges';
+    this.ctx = this.canvas.getContext('2d');
+    this.ctx.imageSmoothingEnabled = false; // Disable anti-aliasing
+    // Scale the drawing context so coordinates use logical pixel units (width x height)
+    this.ctx.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0);
         
         // Initialize asset manager
         this.assets = new PixelArtManager(this.ctx);
@@ -35,9 +42,10 @@ class GameEngine {
     setupInput() {
         this.canvas.addEventListener('click', (e) => {
             const rect = this.canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
-            const y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
-            
+            // Map pointer to logical canvas coordinates (unaffected by pixelRatio)
+            const x = (e.clientX - rect.left) * (this.width / rect.width);
+            const y = (e.clientY - rect.top) * (this.height / rect.height);
+
             if (this.currentScene) {
                 this.currentScene.handleClick(x, y);
             }
