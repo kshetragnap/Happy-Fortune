@@ -99,11 +99,23 @@ class BlackjackScene extends Scene {
             this.drawButton(ctx, 'DEAL', this.engine.width - 200, this.engine.height - 80, true);
         }
 
-        // Draw game message
+        // Draw game message (auto-shrink to fit)
         if (this.game.message) {
             ctx.fillStyle = '#ffd700';
-            ctx.font = '32px "Press Start 2P", monospace';
             ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Start with preferred font size and reduce until the message fits
+            let fontSize = 32;
+            const minFont = 12;
+            const maxWidth = this.engine.width - 40; // allow some padding
+            while (fontSize >= minFont) {
+                ctx.font = `${fontSize}px "Press Start 2P", monospace`;
+                const measured = ctx.measureText(this.game.message).width;
+                if (measured <= maxWidth) break;
+                fontSize -= 2;
+            }
+
             ctx.fillText(this.game.message, this.engine.width / 2, this.engine.height / 2);
         }
 

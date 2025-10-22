@@ -50,6 +50,22 @@ class GameEngine {
                 this.currentScene.handleClick(x, y);
             }
         });
+
+        // Keyboard shortcut: press M to add 1000 coins (cheat)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'm' || e.key === 'M') {
+                this.addCoins(1000);
+                // show a temporary message on the current scene if possible
+                if (this.currentScene) {
+                    this.currentScene.message = '+1000 coins!';
+                    setTimeout(() => {
+                        if (this.currentScene && this.currentScene.message === '+1000 coins!') {
+                            this.currentScene.message = '';
+                        }
+                    }, 1500);
+                }
+            }
+        });
     }
 
     addScene(name, scene) {
