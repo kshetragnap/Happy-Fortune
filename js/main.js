@@ -10,7 +10,6 @@ window.addEventListener('load', () => {
     // Create and add scenes
     engine.addScene('menu', new MainMenuScene(engine));
     engine.addScene('blackjack', new BlackjackScene(engine));
-    engine.addScene('poker', new PokerScene(engine));
     
     // Set initial scene
     engine.setScene('menu');
