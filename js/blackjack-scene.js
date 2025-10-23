@@ -3,7 +3,8 @@ class BlackjackScene extends Scene {
         super(engine);
         this.game = new BlackjackGame(engine);
         this.betOptions = [10, 25, 50, 100];
-        this.selectedBet = 10;
+        // initialize engine bet amount if not set
+        if (!engine.betAmount) engine.betAmount = 10;
     }
 
     enter() {
@@ -18,18 +19,37 @@ class BlackjackScene extends Scene {
         // Betting controls (bottom of screen)
         if (y >= this.engine.height - 100) {
             if (this.game.canBet()) {
-                // Bet amount selection
+                // +/- buttons at left
+                const plusX = 20;
+                const plusY = this.engine.height - 120;
+                const btnW = 32 * 3;
+                const btnH = 16 * 3;
+                if (x >= plusX && x < plusX + btnW) {
+                    if (y >= plusY && y < plusY + btnH) {
+                        this.engine.changeBet(this.engine.betStep);
+                        return;
+                    }
+                    if (y >= plusY + btnH + 8 && y < plusY + btnH * 2 + 8) {
+                        this.engine.changeBet(-this.engine.betStep);
+                        return;
+                    }
+                }
+
+                // Chip clicks: set bet by clicking chip assets
                 this.betOptions.forEach((bet, index) => {
                     const chipX = 200 + (index * 80);
-                    if (x >= chipX && x < chipX + 60 && y >= this.engine.height - 80) {
-                        this.selectedBet = bet;
+                    const chipY = this.engine.height - 80;
+                    if (x >= chipX && x < chipX + 60 && y >= chipY && y < chipY + (16 * 4)) {
+                        // set engine bet step to this chip value (how much +/- will change)
+                        if (this.engine.setBetStep) this.engine.setBetStep(bet);
+                        else this.engine.betStep = bet;
                     }
                 });
 
                 // Deal button
                 if (x >= this.engine.width - 200 && x < this.engine.width - 100 &&
                     y >= this.engine.height - 80) {
-                    this.game.placeBet(this.selectedBet);
+                    this.game.placeBet(this.engine.betAmount);
                 }
             }
         }
@@ -80,13 +100,15 @@ class BlackjackScene extends Scene {
             this.drawButton(ctx, 'STAND', this.engine.width - 150, 280, this.game.canStand());
         }
 
-        // Draw betting controls
+        // Draw betting controls (use engine.betAmount and +/- buttons)
         if (this.game.canBet()) {
+            // Draw chips for quick pick
             this.betOptions.forEach((bet, index) => {
                 const chipX = 200 + (index * 80);
                 const chipY = this.engine.height - 80;
                 this.engine.assets.drawAsset(ctx, `chip_${bet}`, chipX, chipY, 4);
-                if (bet === this.selectedBet) {
+                // draw selection highlight if matches engine.betStep
+                if (bet === this.engine.betStep) {
                     ctx.strokeStyle = '#ffd700';
                     ctx.lineWidth = 2;
                     const chipAsset = this.engine.assets.getAsset(`chip_${bet}`);
@@ -96,6 +118,16 @@ class BlackjackScene extends Scene {
                 }
             });
 
+            // Draw +/- buttons
+            this.engine.assets.drawAsset(ctx, `button_+`, 20, this.engine.height - 120, 3);
+            this.engine.assets.drawAsset(ctx, `button_-`, 20, this.engine.height - 120 + (16 * 3) + 8, 3);
+
+            // Draw bet amount text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '20px "Press Start 2P", monospace';
+            ctx.fillText(`Bet: ${this.engine.betAmount}`, 20, this.engine.height - 140);
+
+            // Draw Deal button
             this.drawButton(ctx, 'DEAL', this.engine.width - 200, this.engine.height - 80, true);
         }
 

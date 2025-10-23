@@ -20,7 +20,7 @@ class MainMenuScene extends Scene {
         this.buttons = [
             { x: centerX, y: 200, width: 200, height: 60, text: 'PLAY', isPlayButton: true },
             { x: centerX, y: 300, width: 200, height: 50, text: 'Blackjack', scene: 'blackjack', hidden: true },
-            
+            { x: centerX, y: 400, width: 200, height: 50, text: 'Slots', scene: 'slots', hidden: true }
         ];
         this.showGames = false;
     }

@@ -243,11 +243,16 @@ class PixelArtManager {
             'M': [0b1001,0b1111,0b1111,0b1001,0b1001],
             'N': [0b1001,0b1101,0b1011,0b1001,0b1001],
             'S': [0b0111,0b1000,0b0110,0b0001,0b1110],
+            'P': [0b1110,0b1001,0b1110,0b1000,0b1000],
             'T': [0b1111,0b0100,0b0100,0b0100,0b0100],
             'U': [0b1001,0b1001,0b1001,0b1001,0b1111],
             'B': [0b1110,0b1001,0b1110,0b1001,0b1110],
             'E': [0b1111,0b1000,0b1110,0b1000,0b1111]
         };
+
+        // Add plus and minus glyphs
+        glyphs['+'] = [0b0100,0b0100,0b1110,0b0100,0b0100];
+        glyphs['-'] = [0b0000,0b0000,0b1110,0b0000,0b0000];
 
         // Normalize input to uppercase and trim
         const s = String(text || '').toUpperCase().trim();
@@ -339,10 +344,12 @@ class PixelArtManager {
         // Decorative chip (no number) used in menus
         this.storeAsset('chip_decor', this.createChip(null));
 
-        // Create and store button assets
-        ['Bet', 'Hit', 'Stand', 'Deal'].forEach(text => {
-            this.storeAsset(`button_${text.toLowerCase()}`, this.createButton(text));
-            this.storeAsset(`button_${text.toLowerCase()}_inactive`, this.createButton(text, false));
+        // Create and store button assets (include Spin/Menu and + / -)
+        ['Bet', 'Hit', 'Stand', 'Deal', 'Spin', 'Menu', '+', '-'].forEach(text => {
+            // convert non-alphanumeric names to safe asset keys
+            const key = String(text).toLowerCase();
+            this.storeAsset(`button_${key}`, this.createButton(text));
+            this.storeAsset(`button_${key}_inactive`, this.createButton(text, false));
         });
 
         // Store table felt

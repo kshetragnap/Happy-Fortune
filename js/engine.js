@@ -7,6 +7,10 @@ class GameEngine {
         this.scenes = new Map();
         this.currentScene = null;
         this.coins = 1000; // Starting coins
+        // Global bet amount (used by games)
+        this.betAmount = 10;
+    // Global bet step (how much + / - changes the bet by)
+    this.betStep = 10;
         
         // Initialize pixel art assets
         this.assets = null;
@@ -70,6 +74,28 @@ class GameEngine {
 
     addScene(name, scene) {
         this.scenes.set(name, scene);
+    }
+
+    // Bet management helpers
+    setBet(amount) {
+        const a = Math.max(1, Math.floor(amount));
+        this.betAmount = a;
+    }
+
+    setBetStep(step) {
+        this.betStep = Math.max(1, Math.floor(step));
+    }
+
+    changeBet(deltaOrCount) {
+        // If a number of steps is passed, treat as multiplier of betStep when large;
+        // if the delta seems like a step (e.g., +/-10), just apply directly.
+        let delta = deltaOrCount;
+        // If the argument is exactly +1 or -1, use betStep multiplier
+        if (deltaOrCount === 1) delta = this.betStep;
+        if (deltaOrCount === -1) delta = -this.betStep;
+
+        const newBet = Math.max(1, Math.floor(this.betAmount + delta));
+        this.betAmount = newBet;
     }
 
     setScene(name) {
