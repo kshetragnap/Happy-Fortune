@@ -123,7 +123,7 @@ class SlotScene extends Scene {
             ctx.fillStyle = '#ffd700';
             ctx.font = '20px "Press Start 2P", monospace';
             ctx.textAlign = 'center';
-            ctx.fillText(this.game.message, this.engine.width / 2, this.engine.height - 80);
+            ctx.fillText(this.game.message, this.engine.width / 2, this.engine.height - 160); // Moved up by 80 pixels
         }
     }
 }

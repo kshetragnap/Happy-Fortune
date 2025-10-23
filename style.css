@@ -4,4 +4,20 @@ body {
     align-items: center;
 }
 
+#cat-mode-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #ff69b4;
+    color: white;
+    border: none;
+    font-family: 'Press Start 2P', cursive;
+
+
+}
+
+
+
+
 
