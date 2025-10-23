@@ -221,20 +221,65 @@ class PixelArtManager {
         return canvas;
     }
 
-    // Create a button (32x16 pixels)
+    // Create a button (32x16 pixels) using a tiny pixel font for crisp scaling
     createButton(text, isActive = true) {
         const canvas = this.createPixelCanvas(32, 16);
         const ctx = canvas.getContext('2d');
-        
+
         // Button background
         ctx.fillStyle = isActive ? this.colors.gold : this.colors.shadow;
         ctx.fillRect(0, 0, 32, 16);
-        
-        // Button text
+
+        // Pixel font glyphs (4x5) for required uppercase letters
+        // Each entry is 5 rows of 4-bit patterns (leftmost bit is highest)
+        const glyphs = {
+            'A': [0b0110,0b1001,0b1111,0b1001,0b1001],
+            'B': [0b1110,0b1001,0b1110,0b1001,0b1110],
+            'D': [0b1110,0b1001,0b1001,0b1001,0b1110],
+            'E': [0b1111,0b1000,0b1110,0b1000,0b1111],
+            'H': [0b1001,0b1001,0b1111,0b1001,0b1001],
+            'I': [0b1110,0b0100,0b0100,0b0100,0b1110],
+            'L': [0b1000,0b1000,0b1000,0b1000,0b1111],
+            'M': [0b1001,0b1111,0b1111,0b1001,0b1001],
+            'N': [0b1001,0b1101,0b1011,0b1001,0b1001],
+            'S': [0b0111,0b1000,0b0110,0b0001,0b1110],
+            'T': [0b1111,0b0100,0b0100,0b0100,0b0100],
+            'U': [0b1001,0b1001,0b1001,0b1001,0b1111],
+            'B': [0b1110,0b1001,0b1110,0b1001,0b1110],
+            'E': [0b1111,0b1000,0b1110,0b1000,0b1111]
+        };
+
+        // Normalize input to uppercase and trim
+        const s = String(text || '').toUpperCase().trim();
+
+        // Pixel dimensions
+        const pxW = 4; // glyph width
+        const pxH = 5; // glyph height
+        const spacing = 1; // pixels between glyphs
+
+        // Compute total width of the text block
+        const totalW = s.length * pxW + Math.max(0, s.length - 1) * spacing;
+
+        // Starting position to center horizontally and vertically
+        const startX = Math.floor((32 - totalW) / 2);
+        const startY = Math.floor((16 - pxH) / 2);
+
+        // Draw each character using 1x1 rects so scaling remains crisp
         ctx.fillStyle = '#000000';
-        ctx.font = '8px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(text, 16, 11);
+        for (let i = 0; i < s.length; i++) {
+            const ch = s[i];
+            const pattern = glyphs[ch];
+            if (!pattern) continue; // skip unknown chars
+            const ox = startX + i * (pxW + spacing);
+            for (let row = 0; row < pxH; row++) {
+                const bits = pattern[row];
+                for (let col = 0; col < pxW; col++) {
+                    if ((bits >> (pxW - 1 - col)) & 1) {
+                        ctx.fillRect(ox + col, startY + row, 1, 1);
+                    }
+                }
+            }
+        }
 
         return canvas;
     }
